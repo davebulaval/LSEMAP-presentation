@@ -1,0 +1,8 @@
+\babel@toc {french}{}
+\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
+\beamer@sectionintoc {2}{Related Work}{4}{0}{2}
+\beamer@sectionintoc {3}{Subword Embeddings}{6}{0}{3}
+\beamer@sectionintoc {4}{Architecture}{8}{0}{4}
+\beamer@sectionintoc {5}{Data}{10}{0}{5}
+\beamer@sectionintoc {6}{Experiments}{15}{0}{6}
+\beamer@sectionintoc {7}{Conclusion}{18}{0}{7}
