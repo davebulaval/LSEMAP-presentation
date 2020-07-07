@@ -72,12 +72,45 @@
 	\section{Introduction}
 	
 	\begin{frame}{Introduction}
-		...
+		What's address parsing?
+		\begin{figure}
+			\centering
+			\includegraphics[width=\linewidth]{address_parsing_example.png}
+		\end{figure}
+
+		Useful for tasks such as \textit{Record Linkage} and \textit{Geocoding}
 	\end{frame}
 
 	\section{Related Work}
-	\begin{frame}{Related Work}
-		...
+	\subsection{Address parsing for one country}
+	\begin{frame}{Related Work - Address parsing for one country}
+		\begin{itemize}
+			\item Rule based methods
+			\item Probabilistic models
+			\begin{itemize}
+				\item Hidden Markov Models (HMM)
+				\item Conditional Random Fields (CRF)
+			\end{itemize}
+			\item Neural networks
+			\begin{itemize}
+				\item Feed-forward Neural Network
+				\item Recurrent Neural Networks
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+
+	\subsection{Multinational address parsing}
+	\begin{frame}{Related work - Multinational address parsing}
+		\textbf{Libpostal} \footnote{\tiny{\url{https://github.com/openvenues/libpostal}}}
+		\begin{itemize}
+			\item CRF based model
+			\item Preprocessing
+			\item '\textit{trained on over 1 billion examples in every inhabited country on Earth}' \footnote{\tiny{\url{https://medium.com/@albarrentine/statistical-nlp-on-openstreetmap-part-2-80405b988718}}}
+		\end{itemize}
+
+		\vfill
+
+		\textbf{No previous neural network approaches for multinational address parsing}
 	\end{frame}
 
 	\section{Subword Embeddings}
