@@ -128,17 +128,24 @@
 	
 	\section{Data}
 	\begin{frame}{About the Data}
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=0.8\textwidth,height=0.8\textheight,keepaspectratio]{Samples2.pdf}
-		\end{figure}
+		\begin{itemize}
+			\item Built using the open-source data on which Libpostal's models were trained.
+			\item Contain 61 countries.
+			\item We used eight tags : StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDeliver \footnote{Libpostal used 20 tags.}.
+		\end{itemize}
+	\end{frame}	
+
+	\begin{frame}{Examples of Address and their patterns}
+			We use five different address patterns (one for each color) and a sixth one for some countries' using more than a pattern (no color). 
+			\begin{figure}[h!]
+				\centering
+				\includegraphics[width=0.8\textwidth,height=0.75\textheight,keepaspectratio]{Samples2.pdf}
+			\end{figure}
 	\end{frame}
 
-	\begin{frame}{Training Data}
-		100K of each country ...
-	\end{frame}
-
-	\begin{frame}{Holdout Test Set}
+	\begin{frame}{Training Data and Holdout Test Set}
+		20 countries are used for the multinational training with a sample size of \num{100000} per country and the rest is used as a holdout. \\\bigskip
+		
 		\resizebox{\textwidth}{!}{%
 			\begin{tabular}{cccccccc}
 				\toprule
@@ -154,6 +161,8 @@
 	\end{frame}
 
 	\begin{frame}{Zero-Shot Test Set}
+		41 countries are used for zero-shot transfer evaluation (never seen in training). \\\bigskip
+		
 		\resizebox{\textwidth}{!}{%
 		    \begin{tabular}{cccccccc}
 				\toprule
@@ -174,7 +183,20 @@
 	\end{frame}
 
 	\section{Experiments}
-	\begin{frame}{Experiments}
+	\begin{frame}{Training Procedure}
+		\begin{itemize}
+			\item We trained five times\footnote{With the following seed $\{5, 10, 15, 20, 25\}$} each of our two model (\textbf{fastText} and \textbf{BPEmb}).
+			\item 200 epochs with a batch size of \num{2048}. 
+			\item We used an early stopping with a patience of 15 epochs.
+			\item A starting learning rate at 0.1 and a learning rate scheduling (factor of 0.1) after ten epochs without loss decrease. 
+			\item Cross-Entropy loss.
+			\item Stochastic Gradient Descent (SGD) optimizer.
+			\item Teacher forcing \cite{6795228}
+		\end{itemize}
+	\end{frame}
+	
+	
+	\begin{frame}{Multinational Evaluation}
 		\resizebox{\textwidth}{!}{%
 			\begin{tabular}{cccccc}
 				\toprule
@@ -195,7 +217,7 @@
 		}	
 	\end{frame}
 
-	\begin{frame}{Experiments}
+	\begin{frame}{Zero-shot Evaluation}
 		\resizebox{\textwidth}{!}{%
 		    \begin{tabular}{cccccc}
 				\toprule
@@ -228,8 +250,18 @@
 	\end{frame}
 	
 	\section{Conclusion}
+	\begin{frame}{Future Work}
+		\begin{itemize}
+			\item Attention mechanism \cite{bahdanau2014neural}
+			\item Domain adaptation techniques (e. g. DANN) (CITE)
+		\end{itemize}
+	\end{frame}
 	\begin{frame}{Conclusion}
-		
+		\begin{itemize}
+			\item Tackled the multinational address parsing problem with SOTA results.
+			\item Shown that subword embeddings thelp to solve the multilingual aspect of our task.
+			\item We explored the possibility of zero-shot transfer across countries and achieved interesting, but not yet optimal results.
+		\end{itemize}		
 	\end{frame}
 		
 	
