@@ -122,8 +122,7 @@
 	\begin{frame}{Subword Embeddings}
 		\uncover<1->{\textbf{Word embedding}: vector representation of a word}
 		\begin{itemize}
-			\item<1-> \textit{One-hot} vector (\textit{[0 0 0 0 0 1 0 0 0...]})
-			\item<1-> Pre-trained embeddings (e.g: \textit{Word2Vec}, \textit{Glove})
+			\item<1-> Non-contextual embeddings (e.g: \textit{Word2Vec}, \textit{Glove})
 			\item<1-> Contextual embeddings (e.g: \textit{ELMo}, \textit{BERT})
 		\end{itemize}
 
@@ -146,15 +145,8 @@
 	\end{frame}
 
 	\section{Architecture}
-	\begin{frame}{Architecture}
-		\begin{figure}[h!]
-			\centering
-			\includegraphics[width=1.1\textwidth,height=\textheight,keepaspectratio]{Network.pdf}
-		\end{figure}
-	\end{frame}
-
 	\begin{frame}{Embedding Model}
-		We compare two pre-trained monolingual embedding. \marouane{byte pair is multilingual}
+		We compare two pre-trained embedding.
 		\begin{itemize}
 			\item<2-> A fixed pre-trained monolingual fastText model (pre-trained on the French language) (\textbf{fastText}).
 			\item<3-> A encoding of words using MultiBPEmb and merge the obtained embeddings for each word into one word embedding using a Bidirectional LSTM (Bi-LSTM) (hidden state dimension of $300$). We refer to this embeddings model technique as \textbf{BPEmb}.
@@ -173,13 +165,20 @@
 		
 		\uncover<5->{Both the encoder's and decoder's hidden states are of dimension $1024$.}
 	\end{frame}
+
+	\begin{frame}{Architecture}
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=1.1\textwidth,height=\textheight,keepaspectratio]{Network.pdf}
+		\end{figure}
+	\end{frame}
 	
 	\section{Data}
 	\begin{frame}{About the Data}
 		\begin{itemize}
 			\item<1-> Built using the open-source data on which Libpostal's models were trained.
 			\item<2-> Contain $61$ countries.
-			\item<2-> We used eight tags: StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDelivery \footnote{Libpostal used $20$ tags.}.
+			\item<2-> We used eight tags: StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDelivery\footnote{Libpostal used $20$ tags.}.
 		\end{itemize}
 	\end{frame}	
 
@@ -233,14 +232,14 @@
 	\section{Experiments}
 	\begin{frame}{Training Procedure}
 		\begin{itemize}
-			\item<1-> We trained five times\footnote{With the following seed $\{5, 10, 15, 20, 25\}$} each of our two model (\textbf{fastText} and \textbf{BPEmb}).
+			\item<1-> We trained five times\footnote{With the following seed $\{5, 10, 15, 20, 25\}$.} each of our two model (\textbf{fastText} and \textbf{BPEmb}).
 			\item<2-> They were trained during $200$ epochs with a batch size of $2048$.
 			\item<3-> We used an early stopping with a patience of 15 epochs.
 			\item<4-> A starting learning rate at $0.1$ and a learning rate scheduling (factor of $0.1$) after ten epochs without loss decrease. 
 			\item<5-> Cross-Entropy loss.
 			\item<6-> Stochastic Gradient Descent (SGD) optimizer.
-			\item<7-> Teacher forcing \cite{6795228}. \marouane{visual?}
-			\item<8-> Trained using Poutyne \cite{poutyne} 
+			\item<7-> Teacher forcing \cite{6795228}.
+			\item<8-> Trained using Poutyne \cite{poutyne}. 
 		\end{itemize}
 	\end{frame}
 	
@@ -339,7 +338,7 @@
 	\begin{frame}{Conclusion}
 		\begin{itemize}
 			\item<1-> Tackled the multinational address parsing problem with SOTA results.
-			\item<2-> Shown \marouane{showed?} that subword embeddings help to solve the multilingual aspect of our task.
+			\item<2-> Showed that subword embeddings help to solve the multilingual aspect of our task.
 			\item<3-> We explored the possibility of zero-shot transfer across countries and achieved interesting, but not yet optimal results.
 		\end{itemize}		
 		\uncover<4->{For more, read the full article \url{https://arxiv.org/abs/2006.16152}}
