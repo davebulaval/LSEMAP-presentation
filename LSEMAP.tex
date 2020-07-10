@@ -13,7 +13,6 @@
 
 \graphicspath{{img/}}
 
-\usepackage{cite}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -29,6 +28,10 @@
 \definecolor{orange}{RGB}{255,128,0}
 \definecolor{blue}{RGB}{0,153,153}
 
+%for footnote
+\usepackage{perpage} %the perpage package
+\MakePerPage{footnote} %the perpage package command
+
 
 \mode<presentation> {
 	\usetheme{ulaval}
@@ -39,7 +42,7 @@
 	\includegraphics[height=0.65cm, keepaspectratio]{graal.pdf}\hspace{.2cm}\vspace{.85\paperheight}}
 
 
-\title{Leveraging Subword Embeddings for Multinational Address Parsing}
+\title{Leveraging Subword Embeddings for Multinational Address Parsing\thanks{\url{https://arxiv.org/abs/2006.16152}}}
 
 \author[Yassine et al.]{Marouane Yassine, David Beauchemin, \\ François Laviolette, Luc Lamontagne}
 \institute[Université Laval]
@@ -78,23 +81,23 @@
 			\includegraphics[width=\linewidth]{address_parsing_example.png}
 		\end{figure}
 
-		Useful for tasks such as \textit{Record Linkage} and \textit{Geocoding}
+		Useful for tasks such as \textit{Record Linkage} and \textit{Geocoding}.
 	\end{frame}
 
 	\section{Related Work}
 	\subsection{Address parsing for one country}
-	\begin{frame}{Related Work - Address parsing for one country}
+	\begin{frame}{Related Work - Address Parsing for One Country}
 		\begin{itemize}
-			\item Rule based methods
-			\item Probabilistic models
+			\item<1-> Rule based methods
+			\item<2-> Probabilistic models
 			\begin{itemize}
-				\item Hidden Markov Models (HMM)
-				\item Conditional Random Fields (CRF)
+				\item<2-> Hidden Markov Models (HMM) \cite{hmm-parsing}
+				\item<2-> Conditional Random Fields (CRF) \cite{crf-parsing}
 			\end{itemize}
-			\item Neural networks
+			\item<3-> Neural networks
 			\begin{itemize}
-				\item Feed-forward Neural Network
-				\item Recurrent Neural Networks
+				\item<3-> Feed-forward Neural Network \cite{feedforward-parsing}
+				\item<3-> Recurrent Neural Networks \cite{rnn-parsing}
 			\end{itemize}
 		\end{itemize}
 	\end{frame}
@@ -103,14 +106,14 @@
 	\begin{frame}{Related work - Multinational address parsing}
 		\textbf{Libpostal} \footnote{\tiny{\url{https://github.com/openvenues/libpostal}}}
 		\begin{itemize}
-			\item CRF based model
-			\item Preprocessing
-			\item '\textit{trained on over 1 billion examples in every inhabited country on Earth}' \footnote{\tiny{\url{https://medium.com/@albarrentine/statistical-nlp-on-openstreetmap-part-2-80405b988718}}}
+			\item<1-> CRF based model
+			\item<2-> Preprocessing and postprocessing
+			\item<3-> '\textit{[T]rained on over 1 billion examples in every inhabited country on Earth}' \footnote{\tiny{\url{https://medium.com/@albarrentine/statistical-nlp-on-openstreetmap-part-2-80405b988718}}}
 		\end{itemize}
 
 		\vfill
 
-		\textbf{No previous neural network approaches for multinational address parsing}
+		\uncover<4->{\textbf{No previous neural network approaches for multinational address parsing}}
 	\end{frame}
 
 	\section{Subword Embeddings}
@@ -125,26 +128,47 @@
 			\includegraphics[width=1.1\textwidth,height=\textheight,keepaspectratio]{Network.pdf}
 		\end{figure}
 	\end{frame}
+
+	\begin{frame}{Embedding Model}
+		We compare two pre-trained monolingual embedding.
+		\begin{itemize}
+			\item<2-> A fixed pre-trained monolingual fastText model (pre-trained on the French language) (\textbf{fastText}).
+			\item<3-> A encoding of words using MultiBPEmb and merge the obtained embeddings for each word into one word embedding using a Bidirectional LSTM (Bi-LSTM) (hidden state dimension of $300$). We refer to this embeddings model technique as \textbf{BPEmb}.
+		\end{itemize}
+
+		\uncover<4->{We run a comparison of the two methods (\textbf{fastText} and \textbf{BPEmb}) to evaluate which one gives better results in our setting.}
+	\end{frame}
+
+	\begin{frame}{Tagging Model}
+		We use a Seq2Seq model consisting of
+		\begin{itemize}
+			\item<2-> a one-layer unidirectional LSTM encoder
+			\item<3-> a one-layer unidirectional LSTM decoder
+			\item<4-> a fully-connected linear layer with a softmax activation. 
+		\end{itemize}
+		
+		\uncover<5->{Both the encoder's and decoder's hidden states are of dimension $1024$.}
+	\end{frame}
 	
 	\section{Data}
 	\begin{frame}{About the Data}
 		\begin{itemize}
-			\item Built using the open-source data on which Libpostal's models were trained.
-			\item Contain 61 countries.
-			\item We used eight tags : StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDeliver \footnote{Libpostal used 20 tags.}.
+			\item<1-> Built using the open-source data on which Libpostal's models were trained.
+			\item<2-> Contain $61$ countries.
+			\item<2-> We used eight tags: StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDeliver \footnote{Libpostal used $20$ tags.}.
 		\end{itemize}
 	\end{frame}	
 
-	\begin{frame}{Examples of Address and their patterns}
-			We use five different address patterns (one for each color) and a sixth one for some countries' using more than a pattern (no color). 
-			\begin{figure}[h!]
+	\begin{frame}{Examples of Address and Their Patterns}
+			We use five different address patterns (one for each color) and another for some countries' using more than a pattern (no color).
+			\uncover<2->{\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.8\textwidth,height=0.75\textheight,keepaspectratio]{Samples2.pdf}
-			\end{figure}
+			\end{figure}}
 	\end{frame}
 
 	\begin{frame}{Training Data and Holdout Test Set}
-		20 countries are used for the multinational training with a sample size of \num{100000} per country and the rest is used as a holdout. \\\bigskip
+		$20$ countries are used for multinational training with a sample size of $100,000$ per country. The rest is used as a holdout (table below). \\\bigskip
 		
 		\resizebox{\textwidth}{!}{%
 			\begin{tabular}{cccccccc}
@@ -161,7 +185,7 @@
 	\end{frame}
 
 	\begin{frame}{Zero-Shot Test Set}
-		41 countries are used for zero-shot transfer evaluation (never seen in training). \\\bigskip
+		$41$ countries are used for zero-shot transfer evaluation (never seen in training) (table below). \\\bigskip
 		
 		\resizebox{\textwidth}{!}{%
 		    \begin{tabular}{cccccccc}
@@ -185,13 +209,13 @@
 	\section{Experiments}
 	\begin{frame}{Training Procedure}
 		\begin{itemize}
-			\item We trained five times\footnote{With the following seed $\{5, 10, 15, 20, 25\}$} each of our two model (\textbf{fastText} and \textbf{BPEmb}).
-			\item 200 epochs with a batch size of \num{2048}. 
-			\item We used an early stopping with a patience of 15 epochs.
-			\item A starting learning rate at 0.1 and a learning rate scheduling (factor of 0.1) after ten epochs without loss decrease. 
-			\item Cross-Entropy loss.
-			\item Stochastic Gradient Descent (SGD) optimizer.
-			\item Teacher forcing \cite{6795228}
+			\item<1-> We trained five times\footnote{With the following seed $\{5, 10, 15, 20, 25\}$} each of our two model (\textbf{fastText} and \textbf{BPEmb}).
+			\item<2-> They were trained during $200$ epochs with a batch size of $2048$.
+			\item<3-> We used an early stopping with a patience of 15 epochs.
+			\item<4-> A starting learning rate at $0.1$ and a learning rate scheduling (factor of $0.1$) after ten epochs without loss decrease. 
+			\item<5-> Cross-Entropy loss.
+			\item<6-> Stochastic Gradient Descent (SGD) optimizer.
+			\item<7-> Teacher forcing \cite{6795228}.
 		\end{itemize}
 	\end{frame}
 	
@@ -214,7 +238,20 @@
 				Switzerland & $\mathbf{99.53 \pm 0.09}$ & $99.49 \pm 0.53$ & Russia & $\mathbf{99.03 \pm 0.24}$ & $97.52 \pm 4.23$\\
 				\bottomrule
 			\end{tabular}%
-		}	
+		}
+	
+	\begin{itemize}
+		\item<2-> \textbf{FastText} give the best performance across the board without considering the standard deviation. 
+		\item<3-> South Korean results are excellent despite the completely different alphabet.
+	\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Multinational Evaluation}
+		\begin{itemize}
+			\item<1-> When using standard deviation, the \textbf{BPEmb} model achieves better results than \textbf{fastText} in most cases. 
+			\item<2-> We find that South Korea is the only country where a perfect accuracy ($100~\%$) was achieved using \textbf{BPEmb} ($3$ out of $5$). 
+			\item<3-> Randomly reordering $6000$ South Korean address as either the first (red) or the second (brown) address pattern (equally divided between the two), the mean accuracy drops to $28.04\%$.
+		\end{itemize}
 	\end{frame}
 
 	\begin{frame}{Zero-shot Evaluation}
@@ -248,20 +285,53 @@
 			\end{tabular}%
 		}	
 	\end{frame}
+
+	\begin{frame}{Zero-shot Evaluation}
+		\begin{itemize}
+			\item<1-> $50~\%$ ($19$ out of $41$) near state-of-the-art performance ($>90~\%$) for \textbf{fastText}. Or $35~\%$ for \textbf{BPEmb}.
+			\item<2-> $80~\%$ ($34$ out of $41$) good performance ($>80~\%$) for \textbf{fastText}. Or $65~\%$ for \textbf{BPEmb}.
+			\item<3-> The lowest results (below $70\%$) occur for countries where the address pattern and the country official language were not seen in the training data such as India, Hungary, and Japan. 
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Zero-shot Evaluation}
+		For Hungary and Japan, the poorest results of all are mostly due to the address structure (blue), which is the near inverse of the two most present ones (red and brown) (never seen structure and language).
+		\newline\bigskip
+		
+		But, Kazakhstan, which uses the same address pattern as Japan, achieves better results. The main difference being the presence of one of the official language (Kazakh and \textbf{Russian}) in the training dataset. 
+		
+		\note{Moreover, India achieves almost $20\%$ better results than Hungary and Japan, even if Hindi does not occur in the training dataset. This is probably due to the use of a nearly identical address pattern as the first one (red). The only difference being the inversion of the province and the postal code. It could mean that if no shared language root is present, a shared address structure allows a decent parsing of the address (almost $70\%$).}
+
+	\end{frame}
 	
 	\section{Conclusion}
 	\begin{frame}{Future Work}
 		\begin{itemize}
-			\item Attention mechanism \cite{bahdanau2014neural}
-			\item Domain adaptation techniques (e. g. DANN) (CITE)
+			\item<1-> Attention mechanism \cite{bahdanau2014neural}.
+			\item<2-> Domain-adversarial training techniques (e. g. DANN) \cite{ganin2015domainadversarial}.
 		\end{itemize}
 	\end{frame}
 	\begin{frame}{Conclusion}
 		\begin{itemize}
-			\item Tackled the multinational address parsing problem with SOTA results.
-			\item Shown that subword embeddings thelp to solve the multilingual aspect of our task.
-			\item We explored the possibility of zero-shot transfer across countries and achieved interesting, but not yet optimal results.
+			\item<1-> Tackled the multinational address parsing problem with SOTA results.
+			\item<2-> Shown that subword embeddings thelp to solve the multilingual aspect of our task.
+			\item<3-> We explored the possibility of zero-shot transfer across countries and achieved interesting, but not yet optimal results.
 		\end{itemize}		
+		\uncover<4->{For more, read the full article \url{https://arxiv.org/abs/2006.16152}}
+	\end{frame}
+
+	\begin{frame}{Acknowledgment}
+		\begin{itemize}
+			\item This research was supported by the Natural Sciences and Engineering Research Council of Canada (IRCPJ 529529-17) and a Canadian insurance company. 
+			\item François Laviolette and Luc Lamontagne for their mentorship in this research.
+			\item Our colleagues at the GRAAL for their comments and reviews.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}[t, allowframebreaks]
+		\frametitle{References}
+		\bibliographystyle{apalike}
+		\bibliography{bibliography}
 	\end{frame}
 		
 	
