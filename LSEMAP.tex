@@ -32,6 +32,8 @@
 \usepackage{perpage} %the perpage package
 \MakePerPage{footnote} %the perpage package command
 
+\newcommand{\marouane}[1]{\textcolor{blue}{(#1 - MY)}}
+\newcommand{\david}[1]{\textcolor{green}{(#1 - DG)}}
 
 \mode<presentation> {
 	\usetheme{ulaval}
@@ -118,7 +120,29 @@
 
 	\section{Subword Embeddings}
 	\begin{frame}{Subword Embeddings}
-		...
+		\uncover<1->{\textbf{Word embedding}: vector representation of a word}
+		\begin{itemize}
+			\item<1-> \textit{One-hot} vector (\textit{[0 0 0 0 0 1 0 0 0...]})
+			\item<1-> Pre-trained embeddings (e.g: \textit{Word2Vec}, \textit{Glove})
+			\item<1-> Contextual embeddings (e.g: \textit{ELMo}, \textit{BERT})
+		\end{itemize}
+
+		\uncover<2->{\textbf{Subword embedding}: vector representation of a unit}
+		\begin{itemize}
+			\item<2-> Character level
+			\item<2-> Character \textit{n-grams} (e.g: \textit{fastText})
+			\item<2-> Byte pair embeddings (\textit{BPEmb}) \cite{bpemb}
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Why subword embeddings?}
+		Multilingual setting
+		\begin{itemize}
+			\item Need of alignement vectors (\textit{Muse} \cite{muse})
+			\item \textit{fasText} support for OOV
+			\item \textit{MultiBPEmb} pre-trained on 275 languages
+		\end{itemize}
+	
 	\end{frame}
 
 	\section{Architecture}
@@ -130,7 +154,7 @@
 	\end{frame}
 
 	\begin{frame}{Embedding Model}
-		We compare two pre-trained monolingual embedding.
+		We compare two pre-trained monolingual embedding. \marouane{byte pair is multilingual}
 		\begin{itemize}
 			\item<2-> A fixed pre-trained monolingual fastText model (pre-trained on the French language) (\textbf{fastText}).
 			\item<3-> A encoding of words using MultiBPEmb and merge the obtained embeddings for each word into one word embedding using a Bidirectional LSTM (Bi-LSTM) (hidden state dimension of $300$). We refer to this embeddings model technique as \textbf{BPEmb}.
@@ -155,7 +179,7 @@
 		\begin{itemize}
 			\item<1-> Built using the open-source data on which Libpostal's models were trained.
 			\item<2-> Contain $61$ countries.
-			\item<2-> We used eight tags: StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDeliver \footnote{Libpostal used $20$ tags.}.
+			\item<2-> We used eight tags: StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDelivery \footnote{Libpostal used $20$ tags.}.
 		\end{itemize}
 	\end{frame}	
 
@@ -215,7 +239,8 @@
 			\item<4-> A starting learning rate at $0.1$ and a learning rate scheduling (factor of $0.1$) after ten epochs without loss decrease. 
 			\item<5-> Cross-Entropy loss.
 			\item<6-> Stochastic Gradient Descent (SGD) optimizer.
-			\item<7-> Teacher forcing \cite{6795228}.
+			\item<7-> Teacher forcing \cite{6795228}. \marouane{visual?}
+			\item<8-> Trained using Poutyne \cite{poutyne} 
 		\end{itemize}
 	\end{frame}
 	
@@ -241,7 +266,7 @@
 		}
 	
 	\begin{itemize}
-		\item<2-> \textbf{FastText} give the best performance across the board without considering the standard deviation. 
+		\item<2-> \textbf{FastText} gives the best performance across the board without considering the standard deviation. 
 		\item<3-> South Korean results are excellent despite the completely different alphabet.
 	\end{itemize}
 	\end{frame}
@@ -308,13 +333,13 @@
 	\begin{frame}{Future Work}
 		\begin{itemize}
 			\item<1-> Attention mechanism \cite{bahdanau2014neural}.
-			\item<2-> Domain-adversarial training techniques (e. g. DANN) \cite{ganin2015domainadversarial}.
+			\item<2-> Domain-adversarial training techniques (e. g. DANN \cite{ganin2015domainadversarial}, ADANN \cite{ADANN}) .
 		\end{itemize}
 	\end{frame}
 	\begin{frame}{Conclusion}
 		\begin{itemize}
 			\item<1-> Tackled the multinational address parsing problem with SOTA results.
-			\item<2-> Shown that subword embeddings thelp to solve the multilingual aspect of our task.
+			\item<2-> Shown \marouane{showed?} that subword embeddings help to solve the multilingual aspect of our task.
 			\item<3-> We explored the possibility of zero-shot transfer across countries and achieved interesting, but not yet optimal results.
 		\end{itemize}		
 		\uncover<4->{For more, read the full article \url{https://arxiv.org/abs/2006.16152}}
