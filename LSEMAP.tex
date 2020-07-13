@@ -129,8 +129,8 @@
 		\uncover<2->{\textbf{Subword embedding}: vector representation of a unit}
 		\begin{itemize}
 			\item<2-> Character level
-			\item<2-> Character \textit{n-grams} (e.g: \textit{fastText})
-			\item<2-> Byte pair embeddings (\textit{BPEmb}) \cite{bpemb}
+			\item<2-> Character \textit{n-grams} (e.g: the bi-gram of "H1A 1B1" is \{H1, 1A, A1, 1B, B1\}) (e.g: \textit{fastText})
+			\item<2-> Byte pair embeddings (e.g: the byte pair of "H1A 1B1" is \{\_H, 0, a, 0, b, 0\}) (e.g: \textit{BPEmb}) \cite{bpemb}
 		\end{itemize}
 	\end{frame}
 
@@ -139,7 +139,7 @@
 		\begin{itemize}
 			\item Need of alignement vectors (\textit{Muse} \cite{muse})
 			\item \textit{fasText} support for OOV
-			\item \textit{MultiBPEmb} pre-trained on 275 languages
+			\item \textit{MultiBPEmb} pre-trained byte pairs multi lingual embeddings (on 275 languages)
 		\end{itemize}
 	
 	\end{frame}
@@ -160,7 +160,8 @@
 		\begin{itemize}
 			\item<2-> a one-layer unidirectional LSTM encoder
 			\item<3-> a one-layer unidirectional LSTM decoder
-			\item<4-> a fully-connected linear layer with a softmax activation. 
+			\item<4-> a fully-connected linear layer to map the representation into the tag space dimensionality (i.e. the number of tags)
+			\item<5-> a softmax activation. 
 		\end{itemize}
 		
 		\uncover<5->{Both the encoder's and decoder's hidden states are of dimension $1024$.}
