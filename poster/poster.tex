@@ -1,11 +1,13 @@
-\documentclass[25pt, a0paper,
-               colspace=15mm, subcolspace=0mm,
-               blockverticalspace=17mm]{tikzposter} % See Section 
+\documentclass[23pt, a0paper,
+               colspace=10mm, subcolspace=0mm,
+               blockverticalspace=12mm, landscape]{tikzposter} % See Section 
 
 \usepackage{graal-poster}
 \usepackage{array}
 \usepackage{multirow}
 \usepackage{multicol}
+
+\usepackage{qrcode}
 
 
 \definecolor{PaleBlue}{rgb}{0,.55,.9}
@@ -50,7 +52,7 @@
 \maketitle
 
 \begin{columns}
-\column{.4}
+\column{.59}
 \block{Introduction}{%
 We propose an approach in which we employ subword embeddings and a Recurrent Neural Network (RNN) architecture to build a single model capable of learning to parse addresses from multiple countries at the same time while taking into account the difference in languages and address formatting systems.
 
@@ -80,7 +82,27 @@ We propose an approach in which we employ subword embeddings and a Recurrent Neu
 
 }
 
-\column{0.6}
+  \column{.41}
+  \block{Data}{
+    Built using the open-source data of Libpostal. Contain $61$ countries. We used eight tags: StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDelivery.
+
+	We use five different address patterns (one for each color) and some countries use more than one of these patterns (no color). The following figure presents two of them.
+
+	\includegraphics[width=0.2\textwidth,height=0.2\textheight,keepaspectratio]{figures/Samples3.png}
+	
+    \textbf{Training data:}
+  \begin{itemize}
+      \item $20$ countries are used for multinational training with a sample size of $100,000$ per country.
+      \item $41$ countries are used for zero-shot transfer evaluation (never seen in training).
+  \end{itemize}
+
+
+  }
+  
+\end{columns}
+
+\begin{columns}
+\column{0.3}
 \block{Subword Embeddings}{
 
 \vspace{-15pt}
@@ -88,20 +110,21 @@ We propose an approach in which we employ subword embeddings and a Recurrent Neu
 
 \textbf{Word embedding} : vector representation of a word
 \begin{itemize}
-    \item Non-contextual embeddings (e.g : Word2Vec, Glove)
-    \item Contextual embeddings (e.g : ELMo, BERT)
+    \item Non-contextual embeddings (e.g. Word2Vec, Glove)
+    \item Contextual embeddings (e.g. ELMo, BERT)
 \end{itemize}
 
 \textbf{Subword embedding} : vector representation of a unit
 \begin{itemize}
     \item Character level
-    \item Character n-grams (e.g : the bi-gram of "H1A 1B1" is {H1, 1A,
-A1, 1B, B1}) (e.g : fastText)
-    \item Byte pair embeddings (e.g: the byte pair of "H1A 1B1" is \{\_H, 0, a, 0, b, 0\}) (e.g: \textit{BPEmb})
+    \item Character n-grams (e.g. 2-gram of "H1A 1B1" is {H1, 1A,
+A1, 1B, B1}) (e.g. fastText)
+    \item Byte pair embeddings (e.g. byte pair of "H1A 1B1" is \{\_H, 0, a, 0, b, 0\}) (e.g. \textit{BPEmb})
 \end{itemize}
 
 }
 
+\column{0.4}
 \block{Architecture}{
 \textbf{Embedding model} : We compare two pre-trained embedding
 \begin{itemize}
@@ -111,49 +134,22 @@ A1, 1B, B1}) (e.g : fastText)
 
 \textbf{Tagging model} : We use a Seq2Seq model consisting of
 		\begin{itemize}
-			\item a one-layer unidirectional LSTM encoder
-			\item a one-layer unidirectional LSTM decoder
-			\item a fully-connected linear layer to map the representation into the tag space dimensionality (i.e. the number of tags)
-			\item a softmax activation. 
+			\item a one-layer unidirectional LSTM encoder and a one-layer unidirectional LSTM decoder
+			\item a fully-connected linear layer to map the representation into the tag space dimensionality (i.e. the number of tags) with a softmax activation. 
 		\end{itemize}
 
 }
-\end{columns}
-
-\begin{columns}
-
-
-  \column{.4}
-  \block{Data}{
-        \begin{itemize}
-			\item Built using the open-source data of Libpostal.
-			\item Contain $61$ countries.
-			\item We used eight tags: StreetNumber, StreetName, Unit, Municipality, Province, PostalCode, Orientation, and GeneralDelivery.
-		\end{itemize}
-	We use five different address patterns (one for each color) and some countries use more than one of these patterns (no color). The following figure presents three of them.
-
-	\includegraphics[width=0.3\textwidth,height=0.25\textheight,keepaspectratio]{figures/Samples2.png}
-
-
-  }
   
-    \column{.6}
+    \column{.3}
   \block{Experiments}{
-  \textbf{Training data:}
-  \begin{itemize}
-      \item $20$ countries are used for multinational training with a sample size of $100,000$ per country. The rest is used as a holdout.
-      \item $41$ countries are used for zero-shot transfer evaluation (never seen in training).
-  \end{itemize}
     \textbf{Training procedure:}
     \begin{itemize}
 			\item We trained each of our two models five times\footnote{With the following seed $\{5, 10, 15, 20, 25\}$.}  (\textbf{fastText} and \textbf{BPEmb}).
 			\item They were trained during $200$ epochs with a batch size of $2048$.
 			\item We used an early stopping with a patience of 15 epochs.
 			\item A starting learning rate at $0.1$ and a learning rate scheduling (factor of $0.1$) after ten epochs without loss decrease. 
-			\item Cross-Entropy loss.
-			\item Stochastic Gradient Descent (SGD) optimizer.
+			\item Cross-Entropy loss with Stochastic Gradient Descent (SGD) optimizer.
 			\item Teacher forcing.
-			\item Trained using Poutyne.
 		\end{itemize}
 
 
@@ -170,12 +166,12 @@ A1, 1B, B1}) (e.g : fastText)
 
 \begin{columns}
 
-  \column{.28}
+  \column{.35}
 
 
   \block{Multinational Evaluation}{
 
-  \resizebox{0.24\textwidth}{!}{%
+  \resizebox{0.3\textwidth}{!}{%
 			\begin{tabular}{cccccc}
 				\toprule
 				Country & \textbf{FastText} & \textbf{BPEmb} & Country & \textbf{FastText} & \textbf{BPEmb}\\
@@ -198,19 +194,19 @@ A1, 1B, B1}) (e.g : fastText)
 	    \item \textbf{FastText} gives the best performance across the board without considering the standard deviation.
 	    \item South Korean results are excellent despite the completely different alphabet.
 	    \item When using standard deviation, the \textbf{BPEmb} model achieves better results than \textbf{fastText} in most cases.
-		\item We find that South Korea is the only country where a perfect accuracy ($100~\%$) was achieved using \textbf{BPEmb} ($3$ out of $5$). 
+		%\item We find that South Korea is the only country where a perfect accuracy ($100~\%$) was achieved using \textbf{BPEmb} ($3$ out of $5$). 
 		\item Randomly reordering $6000$ South Korean addresses as either the first (red) or the second (brown) address pattern (equally divided between the two), the mean accuracy drops to $28.04\%$ (the mean accuracy is of $12.29~\%$ using a random tags procedure).
 	\end{itemize}
 
 
   }
   
-    \column{.38}
+    \column{.53}
 
 
   \block{Zero-shot Evaluation}{
-
-  \resizebox{0.34\textwidth}{!}{%
+    \noindent\begin{minipage}{0.2\textwidth}% adapt widths of minipages to your needs
+      \resizebox{1.51\textwidth}{!}{%
 		\begin{tabular}{cccccc}
 				\toprule
 				Country & \textbf{FastText} & \textbf{BPEmb} & Country & \textbf{FastText} & \textbf{BPEmb}\\
@@ -239,25 +235,24 @@ A1, 1B, B1}) (e.g : fastText)
 				\bottomrule
 			\end{tabular}%
 		}
+    \end{minipage}%
+        \hfill%
+    \begin{minipage}{0.19\textwidth}
     \begin{itemize}
 			\item $50~\%$ ($19$ out of $41$) near state-of-the-art performance ($>90~\%$) for \textbf{fastText}. Or $35~\%$ for \textbf{BPEmb}.
-			\item $80~\%$ ($34$ out of $41$) good performance ($>80~\%$) for \textbf{fastText}. Or $65~\%$ for \textbf{BPEmb}.
-			\item The lowest results (below $70\%$) occur for countries where the address pattern and the country official language were not seen in the training data such as India, Hungary, and Japan. 
+			\item $80~\%$ ($33$ out of $41$) good performance ($>80~\%$) for \textbf{fastText}. Or $65~\%$ for \textbf{BPEmb}.
+			\item The lowest results (below $70\%$) occur for countries where the address pattern and the country official language.
+			\item Interesting results for Hungary, Japan, India and Kazakshtan.
 	\end{itemize}
+    \end{minipage}
+ 
   }
 
 
   
   
-  \column{.34}
+  \column{.12}
   
-    \block{Zero-shot Evaluation Discussion}{
-    For Hungary and Japan, the poorest results are mostly due to the address structure (blue), which is the near inverse of the two most present ones (red and brown) (never seen structure and language).
-    
-    Kazakhstan, which uses the same address pattern as Japan, achieves better results. The main difference being the presence of one of the official language (Kazakh and \textbf{Russian}) in the training dataset.
-    
-    India achieves almost $20\%$ better results than Hungary and Japan, even if Hindi does not occur in the training dataset. Due to the use of a nearly identical address pattern as the first one (red). The only difference being the inversion of the province and the postal code.
-  }
   \block{Conclusion}{
     \begin{itemize}
         \item Tackled the multinational address parsing problem with SOTA results.
@@ -269,6 +264,11 @@ A1, 1B, B1}) (e.g : fastText)
         \item  Attention mechanism
         \item Domain-adversarial training techniques (e.g. DANN or ADANN)
     \end{itemize}
+  }
+  
+   \block{Article QR Code}{
+        \centering   
+        \qrcode[height=2in]{https://arxiv.org/abs/2006.16152}
   }
 \end{columns}
 
